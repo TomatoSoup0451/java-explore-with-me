@@ -47,7 +47,12 @@ public class StatsServiceImpl implements StatsService {
             throw new IllegalArgumentException("Illegal end date format. Pattern should be " + datePattern +
                     "but actually was " + end);
         }
-        return unique ? endpointHitRepository.findUniqueByUrisBetweenStartAndEnd(startDate, endDate, uris) :
-                endpointHitRepository.findByUrisBetweenStartAndEnd(startDate, endDate, uris);
+        if (uris != null) {
+            return unique ? endpointHitRepository.findUniqueByUrisBetweenStartAndEnd(startDate, endDate, uris) :
+                    endpointHitRepository.findByUrisBetweenStartAndEnd(startDate, endDate, uris);
+        } else {
+            return unique ? endpointHitRepository.findAllUniqueBetweenStartAndEnd(startDate, endDate) :
+                    endpointHitRepository.findAllBetweenStartAndEnd(startDate, endDate);
+        }
     }
 }

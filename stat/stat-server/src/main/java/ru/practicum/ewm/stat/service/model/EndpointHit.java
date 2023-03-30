@@ -1,16 +1,16 @@
 package ru.practicum.ewm.stat.service.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Builder
 @Getter
 @Setter
 @Entity
 @Table(name = "endpoint_hits")
-@AllArgsConstructor
 @NoArgsConstructor
 public class EndpointHit {
     @Id

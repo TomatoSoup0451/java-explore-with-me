@@ -35,6 +35,17 @@ public class StatsClient extends BaseClient {
                 .queryParam("start", start)
                 .queryParam("end", end)
                 .queryParam("uris", uris)
+                .queryParam("unique", unique)
+                .encode().toUriString();
+        return get(path);
+    }
+
+    public ResponseEntity<Object> getStats(String start, String end, List<String> uris) {
+        String path = UriComponentsBuilder.newInstance()
+                .path("/stats/")
+                .queryParam("start", start)
+                .queryParam("end", end)
+                .queryParam("uris", uris)
                 .encode().toUriString();
         return get(path);
     }
