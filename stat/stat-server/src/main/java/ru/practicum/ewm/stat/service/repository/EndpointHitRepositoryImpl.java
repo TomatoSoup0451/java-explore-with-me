@@ -26,4 +26,18 @@ public interface EndpointHitRepositoryImpl extends JpaRepository<EndpointHit, Lo
     List<EndpointStatsDto> findUniqueByUrisBetweenStartAndEnd(@Param("start") Date start,
                                                               @Param("end") Date end,
                                                               @Param("uris") List<String> uris);
+
+    @Query(" select new ru.practicum.ewm.stat.dto.EndpointStatsDto(e.app, e.uri, count (e.ip))" +
+            "from EndpointHit e where e.timestamp > :start and e.timestamp < :end " +
+            "group by e.app, e.uri " +
+            "order by count (e.ip) desc ")
+    List<EndpointStatsDto> findAllBetweenStartAndEnd(@Param("start") Date start,
+                                                     @Param("end") Date end);
+
+    @Query(" select new ru.practicum.ewm.stat.dto.EndpointStatsDto(e.app, e.uri, count (distinct e.ip))" +
+            "from EndpointHit e where e.timestamp > :start and e.timestamp < :end " +
+            "group by e.app, e.uri " +
+            "order by count (e.ip) desc ")
+    List<EndpointStatsDto> findAllUniqueBetweenStartAndEnd(@Param("start") Date start,
+                                                           @Param("end") Date end);
 }
