@@ -1,13 +1,13 @@
-package ru.practicum.ewm.stat.client;
+package ru.practicum.ewm.main.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ExploreWithMeStatClientApplication {
+public class ExploreWithMeMainServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ExploreWithMeStatClientApplication.class, args);
+        SpringApplication.run(ExploreWithMeMainServiceApplication.class, args);
     }
 
 }

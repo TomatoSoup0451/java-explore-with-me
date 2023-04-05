@@ -7,7 +7,7 @@ import ru.practicum.ewm.stat.dto.EndpointHitDto;
 import ru.practicum.ewm.stat.dto.EndpointStatsDto;
 import ru.practicum.ewm.stat.service.mapper.EndpointHitMapper;
 import ru.practicum.ewm.stat.service.model.EndpointHit;
-import ru.practicum.ewm.stat.service.repository.EndpointHitRepositoryImpl;
+import ru.practicum.ewm.stat.service.repository.EndpointHitRepository;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class StatsServiceImpl implements StatsService {
 
-    private final EndpointHitRepositoryImpl endpointHitRepository;
+    private final EndpointHitRepository endpointHitRepository;
     private final EndpointHitMapper endpointHitMapper;
     private final String datePattern = "yyyy-MM-dd HH:mm:ss";
     private final SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
@@ -39,13 +39,13 @@ public class StatsServiceImpl implements StatsService {
             startDate = formatter.parse(start);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Illegal start date format. Pattern should be " + datePattern +
-                    "but actually was " + start);
+                    " but actually was " + start);
         }
         try {
             endDate = formatter.parse(end);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Illegal end date format. Pattern should be " + datePattern +
-                    "but actually was " + end);
+                    " but actually was " + end);
         }
         if (uris != null) {
             return unique ? endpointHitRepository.findUniqueByUrisBetweenStartAndEnd(startDate, endDate, uris) :
