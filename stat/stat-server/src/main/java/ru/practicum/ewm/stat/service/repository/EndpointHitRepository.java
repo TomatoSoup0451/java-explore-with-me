@@ -9,7 +9,7 @@ import ru.practicum.ewm.stat.service.model.EndpointHit;
 import java.util.Date;
 import java.util.List;
 
-public interface EndpointHitRepositoryImpl extends JpaRepository<EndpointHit, Long> {
+public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> {
 
     @Query(" select new ru.practicum.ewm.stat.dto.EndpointStatsDto(e.app, e.uri, count (e.ip))" +
             "from EndpointHit e where e.timestamp > :start and e.timestamp < :end and e.uri in :uris " +
