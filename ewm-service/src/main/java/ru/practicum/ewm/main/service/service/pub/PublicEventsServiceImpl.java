@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.service.dto.event.EventFullDto;
 import ru.practicum.ewm.main.service.dto.event.EventShortDto;
-import ru.practicum.ewm.main.service.exception.IdNotFoundException;
+import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.EventMapper;
 import ru.practicum.ewm.main.service.model.enums.EventState;
 import ru.practicum.ewm.main.service.model.enums.Sort;
@@ -81,6 +81,6 @@ public class PublicEventsServiceImpl implements PublicEventsService {
     @Override
     public EventFullDto getEventById(long eventId) {
         return eventMapper.toEventFullDto(eventsRepository.findByIdAndState(eventId, EventState.PUBLISHED)
-                .orElseThrow(() -> new IdNotFoundException("Event with id = " + eventId + " not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = " + eventId + " not found")));
     }
 }

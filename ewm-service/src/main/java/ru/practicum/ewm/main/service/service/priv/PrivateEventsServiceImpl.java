@@ -13,7 +13,7 @@ import ru.practicum.ewm.main.service.dto.participationrequest.EventRequestStatus
 import ru.practicum.ewm.main.service.dto.participationrequest.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.main.service.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.main.service.exception.BadRequestException;
-import ru.practicum.ewm.main.service.exception.IdNotFoundException;
+import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.EventMapper;
 import ru.practicum.ewm.main.service.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.main.service.model.Event;
@@ -46,28 +46,28 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
     }
 
     @Override
-    public Event addNewEvent(long userId, NewEventDto newEventDto) {
+    public EventFullDto addNewEvent(long userId, NewEventDto newEventDto) {
         Event event = eventMapper.toEvent(newEventDto);
         checkEventStart(event);
         event.setInitiator(usersRepository.findById(userId)
-                .orElseThrow((() -> new IdNotFoundException("User with id = " + userId + " not found"))));
+                .orElseThrow((() -> new EntityNotFoundException("User with id = " + userId + " not found"))));
         event.setState(EventState.PENDING);
         event.setCreatedOn(Date.from(Instant.now()));
         Event result = eventsRepository.save(event);
         log.info("Event with id = {} added", result.getId());
-        return result;
+        return eventMapper.toEventFullDto(result);
     }
 
     @Override
     public EventFullDto getEventFullInfo(long userId, long eventId) {
         return eventMapper.toEventFullDto(eventsRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow((() -> new IdNotFoundException("Event with id = " + eventId + " not found"))));
+                .orElseThrow((() -> new EntityNotFoundException("Event with id = " + eventId + " not found"))));
     }
 
     @Override
-    public Event updateEvent(long userId, long eventId, UpdateEventUserRequest updatedEventDto) {
+    public EventFullDto updateEvent(long userId, long eventId, UpdateEventUserRequest updatedEventDto) {
         Event oldEvent = eventsRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow((() -> new IdNotFoundException("Event with id = " + eventId + " not found")));
+                .orElseThrow((() -> new EntityNotFoundException("Event with id = " + eventId + " not found")));
         checkEventStart(oldEvent);
         if (oldEvent.getState() == EventState.PUBLISHED) {
             throw new DataIntegrityViolationException("Only pending or canceled events can be changed");
@@ -80,13 +80,13 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
         checkEventStart(oldEvent);
         Event result = eventsRepository.save(oldEvent);
         log.info("Event with id = {} updated", result.getId());
-        return result;
+        return eventMapper.toEventFullDto(result);
     }
 
     @Override
     public List<ParticipationRequestDto> getEventRequests(long userId, long eventId) {
         Event event = eventsRepository.findById(eventId)
-                .orElseThrow(() -> new IdNotFoundException("Event with id = " + eventId + "not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = " + eventId + "not found"));
         if (userId != event.getInitiator().getId()) {
             throw new BadRequestException("User with id = " + userId + "doesn't have access to requests for " +
                     "event with id = " + eventId);
@@ -100,7 +100,7 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
                                                               EventRequestStatusUpdateRequest requestUpdate) {
 
         Event event = eventsRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow((() -> new IdNotFoundException("Event with id = " + eventId + " not found")));
+                .orElseThrow((() -> new EntityNotFoundException("Event with id = " + eventId + " not found")));
         checkEventStart(event);
 
         Map<Long, ParticipationRequest> currentRequests = participationRequestsRepository
@@ -122,7 +122,7 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
 
         for (long requestId : requestUpdate.getRequestIds()) {
             ParticipationRequest r = Optional.ofNullable(currentRequests.get(requestId))
-                    .orElseThrow(() -> new IdNotFoundException("Request with id = " + requestId + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Request with id = " + requestId + " not found"));
             if (r.getStatus() == ParticipationStatus.CONFIRMED && status == ParticipationStatus.REJECTED) {
                 throw new DataIntegrityViolationException("Can not decline already approved request");
             }

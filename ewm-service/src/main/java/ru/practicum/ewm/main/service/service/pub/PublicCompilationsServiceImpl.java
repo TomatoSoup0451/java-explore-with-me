@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.service.dto.compilation.CompilationDto;
-import ru.practicum.ewm.main.service.exception.IdNotFoundException;
+import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.CompilationMapper;
 import ru.practicum.ewm.main.service.repository.CompilationsRepository;
 
@@ -26,6 +26,6 @@ public class PublicCompilationsServiceImpl implements PublicCompilationsService 
     @Override
     public CompilationDto getCompilationById(long compId) {
         return compilationMapper.toCompilationDto(compilationsRepository.findById(compId)
-                .orElseThrow((() -> new IdNotFoundException("Compilation with id = " + compId + " not found"))));
+                .orElseThrow((() -> new EntityNotFoundException("Compilation with id = " + compId + " not found"))));
     }
 }

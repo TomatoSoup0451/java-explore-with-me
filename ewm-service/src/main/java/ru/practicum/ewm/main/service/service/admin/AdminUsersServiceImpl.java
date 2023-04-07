@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.service.dto.user.NewUserRequest;
 import ru.practicum.ewm.main.service.dto.user.UserDto;
-import ru.practicum.ewm.main.service.exception.IdNotFoundException;
+import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.UserMapper;
 import ru.practicum.ewm.main.service.model.User;
 import ru.practicum.ewm.main.service.repository.UsersRepository;
@@ -27,16 +27,16 @@ public class AdminUsersServiceImpl implements AdminUsersService {
     }
 
     @Override
-    public User addUser(NewUserRequest userDto) {
+    public UserDto addUser(NewUserRequest userDto) {
         User result = usersRepository.save(userMapper.toUser(userDto));
         log.info("User with id = {} added", result.getId());
-        return result;
+        return userMapper.toUserDto(result);
     }
 
     @Override
     public void deleteUser(long userId) {
         if (!usersRepository.existsById(userId)) {
-            throw new IdNotFoundException("User with id = " + userId + " not found");
+            throw new EntityNotFoundException("User with id = " + userId + " not found");
         }
         usersRepository.deleteById(userId);
         log.info("User with id = {} deleted", userId);

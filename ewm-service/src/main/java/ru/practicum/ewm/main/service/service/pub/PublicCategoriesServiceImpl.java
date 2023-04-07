@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.service.dto.category.CategoryDto;
-import ru.practicum.ewm.main.service.exception.IdNotFoundException;
+import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.CategoryMapper;
 import ru.practicum.ewm.main.service.repository.CategoriesRepository;
 
@@ -19,7 +19,7 @@ public class PublicCategoriesServiceImpl implements PublicCategoriesService {
     @Override
     public CategoryDto getCategoryById(long catId) {
         return categoryMapper.toCategoryDto(categoriesRepository.findById(catId)
-                .orElseThrow(() -> new IdNotFoundException("Category with id = " + catId + " not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Category with id = " + catId + " not found")));
     }
 
     @Override

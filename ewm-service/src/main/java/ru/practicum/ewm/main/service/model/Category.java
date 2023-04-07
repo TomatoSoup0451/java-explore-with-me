@@ -1,7 +1,6 @@
 package ru.practicum.ewm.main.service.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "categories")
-@NoArgsConstructor
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,7 +1,6 @@
 package ru.practicum.ewm.main.service.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,7 +11,6 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "compilations")
-@NoArgsConstructor
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

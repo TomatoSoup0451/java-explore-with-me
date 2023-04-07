@@ -40,8 +40,8 @@ public class GlobalControllerExceptionHandler {
 
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(IdNotFoundException.class)
-    public ApiError handleIdNotFound(IdNotFoundException e) {
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ApiError handleIdNotFound(EntityNotFoundException e) {
         log.warn(e.getMessage());
         return ApiError.builder()
                 .reason("Object not found")
