@@ -2,7 +2,6 @@ package ru.practicum.ewm.main.service.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.main.service.model.enums.EventState;
 
@@ -13,7 +12,6 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "events")
-@NoArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +49,7 @@ public class Event {
     @Column(columnDefinition = "default 0")
     private Integer participantLimit;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column
     private Date publishedOn;
 

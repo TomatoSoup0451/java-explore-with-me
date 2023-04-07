@@ -10,7 +10,6 @@ import ru.practicum.ewm.main.service.dto.event.UpdateEventUserRequest;
 import ru.practicum.ewm.main.service.dto.participationrequest.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.main.service.dto.participationrequest.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.main.service.dto.participationrequest.ParticipationRequestDto;
-import ru.practicum.ewm.main.service.model.Event;
 import ru.practicum.ewm.main.service.service.priv.PrivateEventsService;
 
 import javax.validation.Valid;
@@ -34,7 +33,7 @@ public class PrivateEventsController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "{userId}/events")
-    public Event addNewEvent(@PathVariable long userId, @Valid @RequestBody NewEventDto newEventDto) {
+    public EventFullDto addNewEvent(@PathVariable long userId, @Valid @RequestBody NewEventDto newEventDto) {
         return eventsService.addNewEvent(userId, newEventDto);
     }
 
@@ -44,9 +43,9 @@ public class PrivateEventsController {
     }
 
     @PatchMapping(path = "{userId}/events/{eventId}")
-    public Event updateEvent(@PathVariable long userId,
-                             @PathVariable long eventId,
-                             @RequestBody @Valid UpdateEventUserRequest updatedEventDto) {
+    public EventFullDto updateEvent(@PathVariable long userId,
+                                    @PathVariable long eventId,
+                                    @RequestBody @Valid UpdateEventUserRequest updatedEventDto) {
         return eventsService.updateEvent(userId, eventId, updatedEventDto);
     }
 

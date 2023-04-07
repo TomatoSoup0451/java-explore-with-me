@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.main.service.dto.user.NewUserRequest;
 import ru.practicum.ewm.main.service.dto.user.UserDto;
-import ru.practicum.ewm.main.service.model.User;
 import ru.practicum.ewm.main.service.service.admin.AdminUsersService;
 
 import javax.validation.Valid;
@@ -28,7 +27,7 @@ public class AdminUsersController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public User addUser(@RequestBody @Valid NewUserRequest userDto) {
+    public UserDto addUser(@RequestBody @Valid NewUserRequest userDto) {
         return service.addUser(userDto);
     }
 

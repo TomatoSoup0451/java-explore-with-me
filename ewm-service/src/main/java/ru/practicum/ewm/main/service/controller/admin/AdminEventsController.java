@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.main.service.dto.event.EventFullDto;
 import ru.practicum.ewm.main.service.dto.event.UpdateEventAdminRequest;
-import ru.practicum.ewm.main.service.model.Event;
 import ru.practicum.ewm.main.service.service.admin.AdminEventsService;
 
 import javax.validation.Valid;
@@ -31,7 +30,7 @@ public class AdminEventsController {
     }
 
     @PatchMapping(path = "/{eventId}")
-    public Event updateEvent(@PathVariable long eventId, @RequestBody @Valid UpdateEventAdminRequest eventDto) {
+    public EventFullDto updateEvent(@PathVariable long eventId, @RequestBody @Valid UpdateEventAdminRequest eventDto) {
         return adminEventsService.updateEvent(eventId, eventDto);
     }
 }

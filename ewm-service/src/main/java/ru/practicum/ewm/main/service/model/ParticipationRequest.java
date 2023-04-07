@@ -1,7 +1,6 @@
 package ru.practicum.ewm.main.service.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import ru.practicum.ewm.main.service.model.enums.ParticipationStatus;
@@ -14,7 +13,6 @@ import java.util.Date;
 @Entity
 @Accessors(chain = true)
 @Table(name = "participation_requests")
-@NoArgsConstructor
 public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

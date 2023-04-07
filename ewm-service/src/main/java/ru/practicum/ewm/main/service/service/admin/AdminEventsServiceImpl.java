@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.service.dto.event.EventFullDto;
 import ru.practicum.ewm.main.service.dto.event.UpdateEventAdminRequest;
-import ru.practicum.ewm.main.service.exception.IdNotFoundException;
+import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.EventMapper;
 import ru.practicum.ewm.main.service.model.Event;
 import ru.practicum.ewm.main.service.model.enums.EventState;
@@ -16,6 +16,7 @@ import ru.practicum.ewm.main.service.repository.CategoriesRepository;
 import ru.practicum.ewm.main.service.repository.EventsRepository;
 import ru.practicum.ewm.main.service.repository.UsersRepository;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -71,9 +72,9 @@ public class AdminEventsServiceImpl implements AdminEventsService {
     }
 
     @Override
-    public Event updateEvent(long eventId, UpdateEventAdminRequest eventDto) {
+    public EventFullDto updateEvent(long eventId, UpdateEventAdminRequest eventDto) {
         Event oldEvent = eventsRepository.findById(eventId)
-                .orElseThrow(() -> new IdNotFoundException("Event with id = " + eventId + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Event with id = " + eventId + " not found"));
         if (oldEvent.getEventDate().toInstant().minus(Duration.ofHours(1)).isBefore(Instant.now())) {
             throw new DataIntegrityViolationException("Event time should be at least 1 hour later from current time");
         }
@@ -90,7 +91,7 @@ public class AdminEventsServiceImpl implements AdminEventsService {
                 if (oldEvent.getState() != EventState.PENDING) {
                     throw new DataIntegrityViolationException("Only pending events can be published");
                 } else {
-                    oldEvent.setPublishedOn(Date.from(Instant.now()));
+                    oldEvent.setPublishedOn(Timestamp.from(Instant.now()));
                     oldEvent.setState(EventState.PUBLISHED);
                 }
             }
@@ -105,6 +106,6 @@ public class AdminEventsServiceImpl implements AdminEventsService {
         }
         eventMapper.updateEventFromUpdateEventAdminRequest(eventDto, oldEvent);
         log.info("Event with id = {} updated", oldEvent.getId());
-        return eventsRepository.save(oldEvent);
+        return eventMapper.toEventFullDto(eventsRepository.save(oldEvent));
     }
 }
