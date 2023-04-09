@@ -16,4 +16,6 @@ public class UserDto {
     String name;
     @NotBlank @Email
     String email;
+
+    Integer rating;
 }

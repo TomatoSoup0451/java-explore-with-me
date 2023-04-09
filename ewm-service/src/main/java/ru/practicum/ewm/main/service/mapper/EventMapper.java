@@ -7,6 +7,7 @@ import ru.practicum.ewm.main.service.dto.event.*;
 import ru.practicum.ewm.main.service.model.Event;
 import ru.practicum.ewm.main.service.repository.CategoriesRepository;
 import ru.practicum.ewm.main.service.repository.ParticipationRequestsRepository;
+import ru.practicum.ewm.main.service.repository.ReactionsRepository;
 import ru.practicum.ewm.stat.client.StatsClient;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public abstract class EventMapper {
     @Autowired
     StatsClient statsClient;
 
+    @Autowired
+    ReactionsRepository reactionsRepository;
+
     public abstract List<EventShortDto> toEventShortDtos(List<Event> events);
 
 
@@ -31,6 +35,7 @@ public abstract class EventMapper {
             " java.util.Collections.singletonList(\"/events/\" + event.getId()), false).getBody())).size() : null)")
     @Mapping(target = "confirmedRequests", expression = "java(requestsRepository.countByEventIdAndStatus(event.getId()," +
             " ru.practicum.ewm.main.service.model.enums.ParticipationStatus.CONFIRMED))")
+    @Mapping(target = "rating", expression = "java(reactionsRepository.countRatingByEventId(event.getId()))")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract EventShortDto toEventShortDto(Event event);
 
@@ -45,6 +50,7 @@ public abstract class EventMapper {
             " java.util.Collections.singletonList(\"/events/\" + event.getId()), false).getBody())).size() : null)")
     @Mapping(target = "confirmedRequests", expression = "java(requestsRepository.countByEventIdAndStatus(event.getId()," +
             " ru.practicum.ewm.main.service.model.enums.ParticipationStatus.CONFIRMED))")
+    @Mapping(target = "rating", expression = "java(reactionsRepository.countRatingByEventId(event.getId()))")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract EventFullDto toEventFullDto(Event event);
 

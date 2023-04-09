@@ -51,4 +51,6 @@ public class EventFullDto {
     Long confirmedRequests;
 
     Integer views;
+
+    Integer rating;
 }

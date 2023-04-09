@@ -13,4 +13,6 @@ public class UserShortDto {
     Long id;
     @NotBlank
     String name;
+
+    Integer rating;
 }
