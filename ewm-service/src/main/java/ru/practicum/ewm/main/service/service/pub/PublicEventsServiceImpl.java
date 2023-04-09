@@ -73,6 +73,10 @@ public class PublicEventsServiceImpl implements PublicEventsService {
                     return events.stream()
                             .sorted(Comparator.comparing(EventShortDto::getViews))
                             .collect(Collectors.toList());
+                case RATING:
+                    return events.stream()
+                            .sorted(Comparator.comparing(EventShortDto::getRating).reversed())
+                            .collect(Collectors.toList());
             }
         }
         return events;
