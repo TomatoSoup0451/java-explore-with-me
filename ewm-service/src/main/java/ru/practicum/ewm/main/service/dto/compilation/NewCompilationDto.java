@@ -5,13 +5,13 @@ import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 import javax.validation.constraints.NotBlank;
-import java.util.List;
+import java.util.Set;
 
 @Jacksonized
 @Builder
 @Value
 public class NewCompilationDto {
-    List<Long> events;
+    Set<Long> events;
     Boolean pinned;
     @NotBlank
     String title;

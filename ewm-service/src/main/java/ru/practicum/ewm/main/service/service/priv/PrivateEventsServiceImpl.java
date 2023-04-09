@@ -21,9 +21,8 @@ import ru.practicum.ewm.main.service.model.ParticipationRequest;
 import ru.practicum.ewm.main.service.model.enums.EventState;
 import ru.practicum.ewm.main.service.model.enums.ParticipationStatus;
 import ru.practicum.ewm.main.service.model.enums.StateActionUser;
-import ru.practicum.ewm.main.service.repository.EventsRepository;
-import ru.practicum.ewm.main.service.repository.ParticipationRequestsRepository;
-import ru.practicum.ewm.main.service.repository.UsersRepository;
+import ru.practicum.ewm.main.service.repository.*;
+import ru.practicum.ewm.stat.client.StatsClient;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -34,20 +33,26 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class PrivateEventsServiceImpl implements PrivateEventsService {
+
     private final EventsRepository eventsRepository;
     private final UsersRepository usersRepository;
     private final ParticipationRequestsRepository participationRequestsRepository;
+    private final ReactionsRepository reactionsRepository;
+    private final CategoriesRepository categoriesRepository;
+
     private final EventMapper eventMapper;
     private final ParticipationRequestMapper requestMapper;
+    private final StatsClient statsClient;
 
     @Override
     public List<EventShortDto> getEventsByUserId(long userId, Pageable pageable) {
-        return eventMapper.toEventShortDtos(eventsRepository.findAllByInitiatorId(userId, pageable));
+        return eventMapper.toEventShortDtos(eventsRepository.findAllByInitiatorId(userId, pageable),
+                participationRequestsRepository, reactionsRepository, statsClient);
     }
 
     @Override
     public EventFullDto addNewEvent(long userId, NewEventDto newEventDto) {
-        Event event = eventMapper.toEvent(newEventDto);
+        Event event = eventMapper.toEvent(newEventDto, categoriesRepository);
         checkEventStart(event);
         event.setInitiator(usersRepository.findById(userId)
                 .orElseThrow((() -> new EntityNotFoundException("User with id = " + userId + " not found"))));
@@ -55,13 +60,19 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
         event.setCreatedOn(Date.from(Instant.now()));
         Event result = eventsRepository.save(event);
         log.info("Event with id = {} added", result.getId());
-        return eventMapper.toEventFullDto(result);
+        return eventMapper.toEventFullDto(result,
+                participationRequestsRepository,
+                reactionsRepository,
+                statsClient);
     }
 
     @Override
     public EventFullDto getEventFullInfo(long userId, long eventId) {
         return eventMapper.toEventFullDto(eventsRepository.findByIdAndInitiatorId(eventId, userId)
-                .orElseThrow((() -> new EntityNotFoundException("Event with id = " + eventId + " not found"))));
+                        .orElseThrow((() -> new EntityNotFoundException("Event with id = " + eventId + " not found"))),
+                participationRequestsRepository,
+                reactionsRepository,
+                statsClient);
     }
 
     @Override
@@ -76,11 +87,14 @@ public class PrivateEventsServiceImpl implements PrivateEventsService {
             StateActionUser actionUser = StateActionUser.valueOf(updatedEventDto.getStateAction());
             oldEvent.setState(actionUser == StateActionUser.CANCEL_REVIEW ? EventState.CANCELED : EventState.PENDING);
         }
-        eventMapper.updateEventFromUpdateEventUserRequest(updatedEventDto, oldEvent);
+        eventMapper.updateEventFromUpdateEventUserRequest(updatedEventDto, oldEvent, categoriesRepository);
         checkEventStart(oldEvent);
         Event result = eventsRepository.save(oldEvent);
         log.info("Event with id = {} updated", result.getId());
-        return eventMapper.toEventFullDto(result);
+        return eventMapper.toEventFullDto(result,
+                participationRequestsRepository,
+                reactionsRepository,
+                statsClient);
     }
 
     @Override

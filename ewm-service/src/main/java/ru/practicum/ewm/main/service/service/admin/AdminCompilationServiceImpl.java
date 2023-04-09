@@ -10,6 +10,7 @@ import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.CompilationMapper;
 import ru.practicum.ewm.main.service.model.Compilation;
 import ru.practicum.ewm.main.service.repository.CompilationsRepository;
+import ru.practicum.ewm.main.service.repository.EventsRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -18,12 +19,13 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     private final CompilationsRepository compilationsRepository;
     private final CompilationMapper compilationMapper;
+    private final EventsRepository eventsRepository;
 
     @Override
     public CompilationDto updateCompilation(long compId, UpdateCompilationRequest compilationDto) {
         Compilation compilation = compilationsRepository.findById(compId)
                 .orElseThrow(() -> new EntityNotFoundException("Compilation with id = " + compId + " not found"));
-        compilationMapper.updateCompilationFromUpdateCompilationRequest(compilationDto, compilation);
+        compilationMapper.updateCompilationFromUpdateCompilationRequest(compilationDto, compilation, eventsRepository);
         Compilation result = compilationsRepository.save(compilation);
         log.info("Compilation with id = {} updated", result.getId());
         return compilationMapper.toCompilationDto(result);
@@ -40,7 +42,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
     @Override
     public CompilationDto addCompilation(NewCompilationDto compilationDto) {
-        Compilation result = compilationsRepository.save(compilationMapper.toCompilation(compilationDto));
+        Compilation result = compilationsRepository.save(compilationMapper.toCompilation(compilationDto, eventsRepository));
         log.info("Compilation with id = {} created", result.getId());
         return compilationMapper.toCompilationDto(result);
     }

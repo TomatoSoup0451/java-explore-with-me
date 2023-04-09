@@ -9,6 +9,7 @@ import ru.practicum.ewm.main.service.dto.user.UserDto;
 import ru.practicum.ewm.main.service.exception.EntityNotFoundException;
 import ru.practicum.ewm.main.service.mapper.UserMapper;
 import ru.practicum.ewm.main.service.model.User;
+import ru.practicum.ewm.main.service.repository.ReactionsRepository;
 import ru.practicum.ewm.main.service.repository.UsersRepository;
 
 import java.util.List;
@@ -19,18 +20,19 @@ import java.util.List;
 public class AdminUsersServiceImpl implements AdminUsersService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
+    private final ReactionsRepository reactionsRepository;
 
     @Override
     public List<UserDto> getUsers(List<Long> ids, Pageable pageable) {
         return userMapper.toUserDtos(ids == null ? usersRepository.findAll(pageable).toList()
-                : usersRepository.findAllByIdIn(ids, pageable));
+                : usersRepository.findAllByIdIn(ids, pageable), reactionsRepository);
     }
 
     @Override
     public UserDto addUser(NewUserRequest userDto) {
         User result = usersRepository.save(userMapper.toUser(userDto));
         log.info("User with id = {} added", result.getId());
-        return userMapper.toUserDto(result);
+        return userMapper.toUserDto(result, reactionsRepository);
     }
 
     @Override

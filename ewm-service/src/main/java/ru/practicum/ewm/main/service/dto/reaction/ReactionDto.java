@@ -18,7 +18,7 @@ public class ReactionDto {
     Date created;
 
     @NotNull
-    boolean positive;
+    boolean like;
 
     @NotNull
     Long reviewer;
@@ -26,3 +26,4 @@ public class ReactionDto {
     @NotNull
     Long event;
 }
+

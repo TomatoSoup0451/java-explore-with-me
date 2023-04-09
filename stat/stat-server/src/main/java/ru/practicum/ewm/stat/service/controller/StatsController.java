@@ -29,8 +29,6 @@ public class StatsController {
                                            @RequestParam String end,
                                            @RequestParam(required = false) List<String> uris,
                                            @RequestParam(defaultValue = "false") boolean unique) {
-        System.out.println(start);
-        System.out.println(end);
         return statsService.getStats(URLDecoder.decode(start, StandardCharsets.UTF_8),
                 URLDecoder.decode(end, StandardCharsets.UTF_8),
                 uris,

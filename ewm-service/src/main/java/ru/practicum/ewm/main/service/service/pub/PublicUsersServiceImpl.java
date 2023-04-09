@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.main.service.dto.user.UserShortDto;
 import ru.practicum.ewm.main.service.mapper.UserMapper;
+import ru.practicum.ewm.main.service.repository.ReactionsRepository;
 import ru.practicum.ewm.main.service.repository.UsersRepository;
 
 import java.util.List;
@@ -14,9 +15,10 @@ import java.util.List;
 public class PublicUsersServiceImpl implements PublicUsersService {
     private final UsersRepository usersRepository;
     private final UserMapper userMapper;
+    private final ReactionsRepository reactionsRepository;
 
     @Override
     public List<UserShortDto> getMostPopularInitiators(Pageable pageable) {
-        return userMapper.toUserShortDtos(usersRepository.findAllSortedByRating(pageable));
+        return userMapper.toUserShortDtos(usersRepository.findAllSortedByRating(pageable), reactionsRepository);
     }
 }

@@ -12,9 +12,8 @@ import ru.practicum.ewm.main.service.mapper.EventMapper;
 import ru.practicum.ewm.main.service.model.Event;
 import ru.practicum.ewm.main.service.model.enums.EventState;
 import ru.practicum.ewm.main.service.model.enums.StateActionAdmin;
-import ru.practicum.ewm.main.service.repository.CategoriesRepository;
-import ru.practicum.ewm.main.service.repository.EventsRepository;
-import ru.practicum.ewm.main.service.repository.UsersRepository;
+import ru.practicum.ewm.main.service.repository.*;
+import ru.practicum.ewm.stat.client.StatsClient;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -32,9 +31,13 @@ public class AdminEventsServiceImpl implements AdminEventsService {
     private final EventsRepository eventsRepository;
     private final UsersRepository usersRepository;
     private final CategoriesRepository categoriesRepository;
+    private final ParticipationRequestsRepository requestsRepository;
+    private final ReactionsRepository reactionsRepository;
+
     private final EventMapper eventMapper;
     private final String datePattern = "yyyy-MM-dd HH:mm:ss";
     private final SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
+    private final StatsClient statsClient;
 
     @Override
     public List<EventFullDto> getEventsByParameters(List<Long> users,
@@ -68,7 +71,7 @@ public class AdminEventsServiceImpl implements AdminEventsService {
                 (categories == null) ? null : categoriesRepository.findAllById(categories),
                 startDate,
                 endDate,
-                pageable));
+                pageable), requestsRepository, reactionsRepository, statsClient);
     }
 
     @Override
@@ -104,8 +107,11 @@ public class AdminEventsServiceImpl implements AdminEventsService {
                 }
             }
         }
-        eventMapper.updateEventFromUpdateEventAdminRequest(eventDto, oldEvent);
+        eventMapper.updateEventFromUpdateEventAdminRequest(eventDto, oldEvent, categoriesRepository);
         log.info("Event with id = {} updated", oldEvent.getId());
-        return eventMapper.toEventFullDto(eventsRepository.save(oldEvent));
+        return eventMapper.toEventFullDto(eventsRepository.save(oldEvent),
+                requestsRepository,
+                reactionsRepository,
+                statsClient);
     }
 }
