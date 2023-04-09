@@ -1,8 +1,9 @@
 package ru.practicum.ewm.main.service.mapper;
 
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mapstruct.Named;
 import ru.practicum.ewm.main.service.dto.user.NewUserRequest;
 import ru.practicum.ewm.main.service.dto.user.UserDto;
 import ru.practicum.ewm.main.service.dto.user.UserShortDto;
@@ -12,20 +13,22 @@ import ru.practicum.ewm.main.service.repository.ReactionsRepository;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public abstract class UserMapper {
+public interface UserMapper {
 
-    @Autowired
-    ReactionsRepository reactionsRepository;
+    @Mapping(target = "rating", source = "id", qualifiedByName = "rating")
+    UserDto toUserDto(User user, @Context ReactionsRepository reactionsRepository);
 
-    @Mapping(target = "rating", expression = "java(reactionsRepository.countRatingByInitiatorId(user.getId()))")
-    public abstract UserDto toUserDto(User user);
+    List<UserDto> toUserDtos(List<User> user, @Context ReactionsRepository reactionsRepository);
 
-    public abstract List<UserDto> toUserDtos(List<User> user);
+    @Mapping(target = "rating", source = "id", qualifiedByName = "rating")
+    UserShortDto toUserShortDto(User user, @Context ReactionsRepository reactionsRepository);
 
-    @Mapping(target = "rating", expression = "java(reactionsRepository.countRatingByInitiatorId(user.getId()))")
-    public abstract UserShortDto toUserShortDto(User user);
+    User toUser(NewUserRequest userDto);
 
-    public abstract User toUser(NewUserRequest userDto);
+    List<UserShortDto> toUserShortDtos(List<User> allSortedByRating, @Context ReactionsRepository reactionsRepository);
 
-    public abstract List<UserShortDto> toUserShortDtos(List<User> allSortedByRating);
+    @Named("rating")
+    default Integer setRating(@Context ReactionsRepository reactionsRepository, Long userId) {
+        return reactionsRepository.countRatingByInitiatorId(userId);
+    }
 }

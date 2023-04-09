@@ -28,6 +28,7 @@ public class Reaction {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @Column
-    private boolean positive;
+    //true = like, false = dislike
+    @Column(name = "is_like")
+    private boolean like;
 }

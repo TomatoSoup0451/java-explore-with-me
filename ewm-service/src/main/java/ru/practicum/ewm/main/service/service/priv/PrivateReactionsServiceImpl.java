@@ -29,7 +29,7 @@ public class PrivateReactionsServiceImpl implements PrivateReactionsService {
     private final ReactionMapper mapper;
 
     @Override
-    public ReactionDto addReaction(long userId, long eventId, boolean positive) {
+    public ReactionDto addReaction(long userId, long eventId, boolean like) {
         Event event = eventsRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("Event with id = " + eventId + " not found"));
         if (event.getState() != EventState.PUBLISHED) {
@@ -48,7 +48,7 @@ public class PrivateReactionsServiceImpl implements PrivateReactionsService {
         Reaction reaction = new Reaction();
         reaction.setEvent(event)
                 .setReviewer(reviewer)
-                .setPositive(positive)
+                .setLike(like)
                 .setCreated(Date.from(Instant.now()));
         ReactionDto result = mapper.toReactionDto(reactionsRepository.save(reaction));
         log.info("Reaction with id = {} created", result.getId());
@@ -56,17 +56,17 @@ public class PrivateReactionsServiceImpl implements PrivateReactionsService {
     }
 
     @Override
-    public ReactionDto updateReaction(long userId, long reactionId, boolean positive) {
+    public ReactionDto updateReaction(long userId, long reactionId, boolean like) {
         Reaction reaction = reactionsRepository.findById(reactionId)
                 .orElseThrow(() -> new EntityNotFoundException("Reaction with id = " + reactionId + " not found"));
         if (reaction.getReviewer().getId() != userId) {
             throw new DataIntegrityViolationException("User with id = " + userId + " can't modify reaction of user " +
                     "with id = " + reaction.getReviewer().getId());
         }
-        if (reaction.isPositive() == positive) {
+        if (reaction.isLike() == like) {
             throw new DataIntegrityViolationException("Old and new reactions can't be the same");
         }
-        reaction.setPositive(positive).setCreated(Date.from(Instant.now()));
+        reaction.setLike(like).setCreated(Date.from(Instant.now()));
         ReactionDto result = mapper.toReactionDto(reactionsRepository.save(reaction));
         log.info("Reaction with id = {} updated", result.getId());
         return result;

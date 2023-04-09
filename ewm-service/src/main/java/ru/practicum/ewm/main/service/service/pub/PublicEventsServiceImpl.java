@@ -11,6 +11,9 @@ import ru.practicum.ewm.main.service.model.enums.EventState;
 import ru.practicum.ewm.main.service.model.enums.Sort;
 import ru.practicum.ewm.main.service.repository.CategoriesRepository;
 import ru.practicum.ewm.main.service.repository.EventsRepository;
+import ru.practicum.ewm.main.service.repository.ParticipationRequestsRepository;
+import ru.practicum.ewm.main.service.repository.ReactionsRepository;
+import ru.practicum.ewm.stat.client.StatsClient;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +31,9 @@ public class PublicEventsServiceImpl implements PublicEventsService {
     private final SimpleDateFormat formatter = new SimpleDateFormat(datePattern);
     private final EventMapper eventMapper;
     private final CategoriesRepository categoriesRepository;
+    private final ParticipationRequestsRepository requestsRepository;
+    private final ReactionsRepository reactionsRepository;
+    private final StatsClient statsClient;
 
     @Override
     public List<EventShortDto> getEventsByParams(String text, List<Long> categories, Boolean paid, String rangeStart,
@@ -56,13 +62,16 @@ public class PublicEventsServiceImpl implements PublicEventsService {
         }
 
         List<EventShortDto> events = eventMapper.toEventShortDtos(eventsRepository.findAllByParamsPublic(
-                text,
-                (categories == null) ? null : categoriesRepository.findAllById(categories),
-                paid,
-                startDate,
-                endDate,
-                onlyAvailable,
-                pageable));
+                        text,
+                        (categories == null) ? null : categoriesRepository.findAllById(categories),
+                        paid,
+                        startDate,
+                        endDate,
+                        onlyAvailable,
+                        pageable),
+                requestsRepository,
+                reactionsRepository,
+                statsClient);
         if (sort != null) {
             switch (Sort.valueOf(sort)) {
                 case EVENT_DATE:
@@ -85,6 +94,9 @@ public class PublicEventsServiceImpl implements PublicEventsService {
     @Override
     public EventFullDto getEventById(long eventId) {
         return eventMapper.toEventFullDto(eventsRepository.findByIdAndState(eventId, EventState.PUBLISHED)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id = " + eventId + " not found")));
+                        .orElseThrow(() -> new EntityNotFoundException("Event with id = " + eventId + " not found")),
+                requestsRepository,
+                reactionsRepository,
+                statsClient);
     }
 }

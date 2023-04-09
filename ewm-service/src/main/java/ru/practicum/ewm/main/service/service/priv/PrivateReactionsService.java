@@ -5,9 +5,9 @@ import ru.practicum.ewm.main.service.dto.reaction.ReactionDto;
 import java.util.List;
 
 public interface PrivateReactionsService {
-    ReactionDto addReaction(long userId, long eventId, boolean positive);
+    ReactionDto addReaction(long userId, long eventId, boolean like);
 
-    ReactionDto updateReaction(long userId, long reactionId, boolean positive);
+    ReactionDto updateReaction(long userId, long reactionId, boolean like);
 
     void deleteReaction(long userId, long reactionId);
 

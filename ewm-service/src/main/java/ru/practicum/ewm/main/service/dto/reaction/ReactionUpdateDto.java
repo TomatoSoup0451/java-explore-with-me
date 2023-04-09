@@ -13,5 +13,5 @@ public class ReactionUpdateDto {
     Long id;
 
     @NotNull
-    Boolean positive;
+    Boolean isLike;
 }

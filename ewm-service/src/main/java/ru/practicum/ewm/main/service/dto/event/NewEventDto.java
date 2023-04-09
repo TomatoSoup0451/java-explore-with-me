@@ -1,6 +1,7 @@
 package ru.practicum.ewm.main.service.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -19,7 +20,8 @@ public class NewEventDto {
     @NotBlank
     String description;
     @NotNull
-    Long category;
+    @JsonProperty("category")
+    Long categoryId;
     @NotNull
     Location location;
     @NotNull

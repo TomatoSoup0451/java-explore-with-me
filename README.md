@@ -17,14 +17,14 @@ POST /users/{userId}/reactions - добавление пользовательс
 Параметры:  
 long userId - id пользователя, оставляющего реакцию  
 long eventId - id события  
-boolean positive - характеристика реакции (true - лайк, false - дизлайк)  
+boolean like - характеристика реакции (true - лайк, false - дизлайк)  
 
 
 PATCH /users/{userId}/reactions/{reactionId} - изменение пользовательской реакции на событие  
 Параметры:  
 long userId - id пользователя, оставляющего реакцию  
 long reactionId - id редактируемой реакции  
-boolean positive - характеристика реакции (true - лайк, false - дизлайк)
+boolean like - характеристика реакции (true - лайк, false - дизлайк)
 
 DELETE /users/{userId}/reactions/{reactionId} - удаление реакции  
 Параметры:  

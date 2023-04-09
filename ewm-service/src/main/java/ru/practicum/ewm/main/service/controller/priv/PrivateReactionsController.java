@@ -18,15 +18,15 @@ public class PrivateReactionsController {
     @PostMapping
     public ReactionDto addReaction(@PathVariable long userId,
                                    @RequestParam long eventId,
-                                   @RequestParam boolean positive) {
-        return reactionsService.addReaction(userId, eventId, positive);
+                                   @RequestParam boolean like) {
+        return reactionsService.addReaction(userId, eventId, like);
     }
 
     @PatchMapping(path = "/{reactionId}")
     public ReactionDto updateReaction(@PathVariable long userId,
                                       @PathVariable long reactionId,
-                                      @RequestParam boolean positive) {
-        return reactionsService.updateReaction(userId, reactionId, positive);
+                                      @RequestParam boolean like) {
+        return reactionsService.updateReaction(userId, reactionId, like);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
